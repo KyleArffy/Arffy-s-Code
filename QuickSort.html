@@ -1,0 +1,176 @@
+<table></table>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3@4.13.0/build/d3.min.js" charset="utf-8"></script>
+<script src="https://cdn.jsdelivr.net/npm/taucharts@2/dist/taucharts.min.js" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/taucharts@2/dist/taucharts.min.css">
+<div id='line'></div>
+
+<script>
+async function everything() {	
+	console.clear();
+
+	function quicksort(a,p = 0,r = a.length - 1) {
+		// if (counter++ < 100) console.log(p,r,a);
+		// for (let i = 0; i < a.length; i++) {
+		// 	a[i] = 7;
+		// }
+		// return a;
+		if (p < r) {
+			let q = partition(a,p,r);
+			quicksort(a,p,q-1);
+			quicksort(a,q+1,r);
+		}
+		return [a];
+
+	}
+	function partition(a,p,r) {
+		let x = a[r];
+		let i = p-1;
+		for (let j = p; j <= r-1; j++) {
+			if (a[j] <= x) {
+				i += 1;
+				let t = a[i];
+				a[i] = a[j];
+				a[j] = t;
+			}
+		}
+		[a[i+1], a[r]] = [a[r], a[i+1]];
+		return i + 1;
+	}
+	function jsSort(a) {
+		let start = Date.now();
+		a.sort();
+		let dt = Date.now() - start;
+		return [a, dt]
+	}	
+	function insertionsort(a) {
+		for (let i = 1; i < a.length; i++) {
+			let t = a[i];
+			for (let j = i; j >= 0; j--) {
+				if (j==0 || t > a[j-1]) {
+					a[j] = t;
+					break;
+				}
+				a[j] = a[j-1];
+			}
+		}
+		return [a];
+	}
+	function test(sortfn,n,a,r = "random"){
+		ls = [];
+		if (r == 'random') {
+			for (let i = 0; i < n; i++){
+				ls.push(Math.floor(Math.random() * 1000) + 1);
+			}
+		} if ( r == 'reverse') {
+			for (let i = 0; i < n; i++){
+				ls.push(n-i);
+			}
+
+		} else if (r == 'sorted') {
+			for (let i = 0; i < n; i++){
+				ls.push(i+1);
+			}
+
+		}
+		if (a > 0 && r == 'random') {
+			let sorted = true;
+			let average = 0;
+			let constant = n;
+			for (let l = 0; l < a; l++) {
+				ls = [];
+				if (r == 'random') {
+					for (let i = 0; i < n; i++){
+						ls.push(Math.floor(Math.random() * 100000000) + 1);
+					}
+				}
+				let t0 = Date.now() 
+				let [array] = sortfn(ls);
+				let dt = Date.now() - t0;
+				average += dt;//(array.length * Math.log2(array.length));
+				let ctn = 0;
+				for (let j = 0; j < array.length; j++) {
+					if (array[j] <= array[j+1]) {
+						ctn += 1;
+					} 
+				}
+				if (ctn >= array.length - 1 && array.length == ls.length && sorted == true) sorted = true;
+				else sorted = false;
+			}
+			average /= a;
+			console.log(`${average} is the average time in ${a} runs for a ${n} number list using ${sortfn.name}`);
+			console.log(`${sorted}`);
+			$('table').append(`<tr><td>${n}</td><td>${average}</td></tr>`);
+			if (sortfn.name == 'quicksort') {
+				constant = n*Math.log2(n);
+			}
+			console.log(constant);
+			let element = {type: sortfn.name, RunTime: average, ListLength: n};
+			datasource.push(element);
+			let element2 = {type: 'calculated', RunTime: constant
+, ListLength: n};
+			datasource.push(element2);
+
+		} else {
+			if (r == 'random') {
+				for (let i = 0; i < n; i++){
+					ls.push(Math.floor(Math.random() * 1000000) + 1);
+				}
+			}  	
+			console.log(`${ls} is the starting list`);
+			let [array, unit] = quicksort(ls);
+			console.log(`${array} is the sorted list`);
+			console.log(`${unit} is the amount of swaps performed to sort the list`)
+			console.log(`${unit/(array.length * Math.log2(array.length))} is the constant in front of nlog(n)`)
+			let ctn = 0;
+			for (let j = 0; j < array.length; j++) {
+				if (array[j] <= array[j+1]) {
+					ctn += 1;
+				} 
+			}
+			if (ctn >= array.length - 1 && array.length == ls.length) console.log('YAY');
+			else console.log('OOF');
+		}
+
+	}
+	sortfunction = insertionsort;
+	let counter = 0;
+	let datasource = [];
+	let calculated;
+	let measured;
+	test(sortfunction,10,100);
+	test(sortfunction,100,100);
+	test(sortfunction,1000,10);
+	test(sortfunction,10000,10);
+	test(sortfunction,100000,10);
+	// test(sortfunction,1000000,10);
+	for (let i = 0; i < datasource.length; i++) {
+		if (datasource[i].type == 'calculated' && datasource[i].ListLength == 100000) calculated = datasource[i].RunTime;
+		if (datasource[i].type == sortfunction.name && datasource[i].ListLength == 100000) measured = datasource[i].RunTime;
+	}
+	let k = measured/calculated;
+	for (let i = 0; i < datasource.length; i++) {
+		if (datasource[i].type == 'calculated') datasource[i].RunTime *= k;
+
+	}
+	let chart = new Taucharts.Chart({
+		guide: {
+			x: {label: 'Numbers in List'},
+			y: {label: 'Average Run Time'}
+		},
+		dimensions: {
+			ListLength: {scale: 'logarithmic'},
+			RunTime: {scale: 'linear'}
+		},
+		data: datasource,
+		type: 'line',
+		x: 'ListLength',
+		y: 'RunTime',
+		color: 'type',
+		});
+	chart.renderTo('#line');
+}
+everything();
+console.log('hi');
+</script>
+

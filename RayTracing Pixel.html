@@ -1,0 +1,67 @@
+<body>
+  Hello, world!
+<div id="ball">I am a ball</div>
+<div> I am a new div </div>
+<br><br>
+	<table border="1">
+
+	</table>
+</body>
+
+<style>
+	#ball {
+		background: green;
+		position: absolute;
+		width: 100px;
+		height: 100px;
+		left: 300px;
+		bottom: 100px;
+		border-radius: 25%;
+		
+	}
+  * {
+    box-sizing: border-box;
+    border-collapse: collapse;
+  }	
+	div {
+		position: absolute;
+	}@
+</style>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script> 
+	function pixel(i, j, w, h) {
+		let r = Math.floor(Math.random() * 255);
+		let g = Math.floor(Math.random() * 255);
+		let b = Math.floor(Math.random() * 255);
+		return [r,g,b];
+	}
+	function rectanglePixel(i, j, w, h) {
+		if (rect.x <= i && i < rect.x + rect.w && rect.y <= j && rect.y + rect.j) return [255, 0, 0];
+    	return [0, 0, 255];
+
+	}	
+	function palette(i, j, w, h) {
+		let r = i/(w-1)*255;
+		let g = i/(w-1)*255;
+		let b = 255;
+		return [r,g,b];
+	}
+let rect = {x: 30, y: 20, w: 80, h: 50}
+let h = 200;
+let v = 200;
+let x = '';
+for (let i = 0; i < h; i++) {
+	x += "<tr>";
+	for (let j = 0; j < v; j++) {
+		[r,g,b] = palette(i,j,h,v);
+		x += '<td style= "background: rgb(' + r + ","+ g + "," + b + ');">'
+		x += r +","+ g +"," + b
+		x += "</td>"
+		}
+		x += "</tr>"
+	}
+ console.log(x); 
+ jQuery('table').html(x);
+
+</script>

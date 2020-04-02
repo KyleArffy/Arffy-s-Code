@@ -1,0 +1,253 @@
+<body>
+  Hello, world!
+<div> I am a new div </div>
+<br><br>
+	<table border="1">
+
+	</table>
+</body>
+
+<style>
+
+	canvas {
+		background: white;
+		margin: 10px;
+		border: thin solid blue;
+	}
+* {
+	box-sizing: border-box;
+    border-collapse: collapse;
+  }
+td {
+	width: 10px;
+	height: 10px;
+
+  }	
+	div {
+		position: absolute;
+	}@
+</style>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+ 	class Canvas {
+	    constructor(w, h) {
+	    	[this.w, this.h] = [w, h];
+	    	this.canvas = document.createElement("canvas");
+	    	$(this.canvas).attr({width: this.w, height: this.h});
+	    	$('body').append(this.canvas);
+	    	this.ctx = this.canvas.getContext('2d');
+	    	this.imageData = this.ctx.getImageData(0, 0, this.w, this.h);
+	     	this.data = this.imageData.data;
+	    }
+	    setPixel(x, y, r, g, b, a) {
+	      	let index = 4 * (y * this.w + x);
+	      	[this.data[index + 0], this.data[index + 1], this.data[index + 2], this.data[index + 3]] = [r, g, b, a];
+	    }
+	    setPixels() {
+	       this.ctx.putImageData(this.imageData, 0, 0);
+	    }
+ 	}
+	function dot(u,v) {
+		return u[0] * v[0] + u[1] * v[1] + u[2] * v[2];
+	}
+
+	function add(u,v) {
+		return [u[0] + v[0], u[1] + v[1], u[2] + v[2]];
+	}
+	function sub(u,v) {
+		return [u[0] - v[0], u[1] - v[1], u[2] - v[2]];
+	}
+	function len(u) {
+		return Math.sqrt(dot(u,u));
+	}
+	function scale(s,u) {
+		return [s*u[0], s*u[1], s*u[2]]
+	}
+	function norm(u) {
+		return scale(1/len(u), u);
+	}
+	function ray_intersect_sphere(g, d, s, r) {
+	    let x = sub(g, s);
+	    let a = dot(d, d);
+	    let b = 2 * dot(x, d);
+	    let c = dot(x,x) - r**2;
+	    let discr = b**2 - 4 * a * c;
+	    if (debug) console.log("discr", discr, g, d);
+	    if (discr < 0) return Infinity;
+	    let t = (-b - Math.sqrt(discr)) / (2 * a);
+	    return t;
+	}
+	function ray_intersect_plane(g, d, n, distance) {
+		let t = (distance - dot(n, g))/dot(n, d);
+		if (debug) console.log("t", t);
+		return t;
+	}
+	function diskPixel(shape, x, y) {
+		let c2 = (x - shape.x)**2 + (y - shape.y)**2;
+		if (c2 < shape.r**2) {
+			return shape.color;
+		} 
+	}
+
+	function rectanglePixel(shape, x, y) {
+		if (shape.x <= x && x < shape.x + shape.w && shape.y >= y && y > shape.y - shape.h) {
+			return shape.color;
+		}
+	}	
+
+	function reflection(g, d, t, n) {
+		let poi = add(g, scale(t, d));
+		let dperp = scale(dot(d, n), n);
+		let dpar = sub(d, dperp);
+		let r = sub(add(g, scale(2 * t, dpar)), poi);
+		return r;
+	}
+
+	function intersect(g, d) {
+		let nearest_t = Infinity;
+		let nearest_shape;
+		for (let k = 0; k < shapes.length; k++) {
+		   	let shape = shapes[k];
+		   	if (shape.shape == 'sphere') {
+		   		let t = ray_intersect_sphere(g,d,shape.s,shape.r); 
+		   		if (0 < t && t < nearest_t) {
+		   			nearest_t = t;
+		   			nearest_shape = shape;
+		   		}
+		   		//console.log(len(sub(poi, shape.s)));
+
+			} else if(shape.shape == 'plane') {
+				let t = ray_intersect_plane(g,d,shape.n,shape.d);
+				if (fuzziness < t && t < nearest_t) {
+					nearest_t = t;
+					nearest_shape = shape;
+				}
+			}
+		   	// if (shape.shape == 'disk') result = diskPixel(shape, x, y);
+		   	// if (shape.shape == 'rect') result = rectanglePixel(shape, x, y);
+// returns first shape because it=  immediately "returns" the shape, bypassing the other ones
+		}
+		return[nearest_t,nearest_shape];
+	}
+	function ray_color(g,d,depth = 1) {
+		if (depth > 3) return [0,255,255];
+		let lights = [[-100,100,200,0.5], [100,100,100,0.7]];
+		let [nearest_t, nearest_shape] = intersect(g,d);
+		if (debug) console.log("nearest_t", nearest_t);
+   		if (nearest_t != Infinity) {
+   			let shape = nearest_shape;
+   			let color = [0,0,0]
+	   		let poi = add(g, scale(nearest_t, d));
+	   		let n = [0,0,0];
+	   		if (shape.shape == 'sphere') n = scale(1/shape.r, sub(poi, shape.s));
+	   		if (shape.shape == 'plane') n = shape.n;
+	   		for (let i = 0; i < lights.length; i++) {
+		   		let ldir = norm(sub(lights[i], poi));
+		   		let lhit = intersect(poi, ldir);
+		   		// lhit[0] = Infinity;
+		   		if (lhit[0] == Infinity) {
+			   		let brightness = dot(n, ldir);
+			   		if (brightness < 0) brightness = 0;
+			   		if (shape.reflect > 0) {
+			   			let r = reflection(g,d,nearest_t,n);
+			   			reflectcolor = ray_color(poi,r,depth+1);
+			   		}
+			   		color = add(color, scale(brightness*lights[i][3], shape.color))
+
+			   	}
+	   		}
+   			return color
+   		}
+		return [255,255,255];
+	}
+	function pixel(x, y) {
+		let g = [0,0.5,2];
+		let d = norm([x,y,-1]);
+		return ray_color(g,d);
+		// let light = [-10,10,10];
+		// let [nearest_t, nearest_shape] = intersect(g,d);
+  //  		if (nearest_t != Infinity) {
+  //  			let shape = nearest_shape;
+	 //   		let poi = add(g, scale(nearest_t, d));
+	 //   		let n = [1,0,0];
+	 //   		if (shape.shape == 'sphere') n = scale(1/shape.r, sub(poi, shape.s));
+	 //   		if (shape.shape == 'plane') n = shape.n;
+	 //   		let l = norm(sub(light, poi));
+	 //   		let brightness = dot(n, l);
+	 //   		if (brightness < 0) brightness = 0;
+  //  			return scale(brightness, shape.color);
+  //  		}
+		// return [255,255,255];
+	}	
+
+	function s2v(i,j,w0,h0) {
+		let w = w0;
+		let h = h0; 
+		let x = 0;
+		let y = 0;
+		if (w > h) {
+			w = h;
+			x = (w0-h0)/2;
+		} else {
+			h = w;
+			y = (h0-w0)/2;
+		}
+		return [(i-x)/(w/2) - 1, 1 - (j-y)/(h/2)];       
+	}
+	let shapes = [
+		// {shape: 'rect', x: -0.05, y: 0.25, w: 0.12, h: 0.5, color: [0, 0, 0]},
+		// {shape: 'rect', x: -0.35, y: 0.2, w: 0.3, h: 0.12, color: [0, 0, 0]},
+		// {shape: 'rect', x: 0, y: 0.2, w: 0.3, h: 0.12, color: [0, 0, 0]},
+		// {shape: 'disk', x: 0, y: 0.5, r: 0.25, color: [0, 0, 0]},
+		// {shape: 'rect', x: -0.17, y: -0.22, w: 0.12, h: 0.4, color: [0, 0, 0]},
+		// {shape: 'rect', x: 0.05, y: -0.22, w: 0.12, h: 0.4, color: [0, 0, 0]},
+		{shape: 'sphere', s: [-6, -5, -10], r: 1, reflect: 0, color: [0, 255, 0]},
+		{shape: 'sphere', s: [-5, 3,-10], r: 2, reflect: 0, color: [0, 0, 255]},
+		{shape: 'sphere', s: [0, 1, -5], r: 2, reflect: 0, color: [255, 0, 0]},
+		{shape: 'sphere', s: [0, -1 ,-5], r: 2, reflect: 0.5, color: [255, 255, 0]},
+		{shape: 'sphere', s: [0, 0, 4], r: 1, reflect: 0, color: [123, 0, 123]},
+		{shape: 'plane', n: norm([0, 1, 0]), d: -3, reflect: 0.8, color: [0, 255, 0]},
+		{shape: 'sphere', s: [4,0,0], r: 0.5, reflect: 0, color: [100,50,0]},
+		{shape: 'sphere', s: [-0.5, 1, -2.5], r: 0.08, reflect: 0, color: [100,50,0]},
+	];
+	let fuzziness = 1e-8;
+	let w = 500;
+	let h = 500;
+	let debug = false;
+	let canvas = new Canvas(w,h);
+	for (let j = 0; j < h; j++){
+		// html += "<tr>";
+		for (let i = 0; i < w; i++) {
+			let [x,y] = s2v(i,j,w,h);
+			let [r,g,b] = pixel(x,y);
+			// html += '<td style= "background: rgb(' + r + ","+ g + "," + b + ');">'
+			// html += "</td>"
+			canvas.setPixel(i,j,r,g,b,255);
+		}
+		// html += "</tr>"
+	}
+	canvas.setPixels();
+	jQuery('canvas').click(event => {
+		debug = true;
+		console.clear();
+		let [i,j] = [event.offsetX, event.offsetY];
+		let [x,y] = s2v(i,j,w,h);
+		console.log("click", i, j);
+		pixel(x, y);
+		debug = false;
+	});
+	// jQuery('table').html(html);
+</script> 
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,21 @@
+<script>
+let datasource = [{
+  type:'us', count:20, date:'12-2013'
+},{
+  type:'us', count:10, date:'01-2014'
+},{
+  type:'bug', count:15, date:'02-2014'
+},{
+  type:'bug', count:23, date:'05-2014'
+}];
+console.log(datasource[1].count);
+console.log(datasource[1]['count']);
+console.log(Object.keys(datasource[1]));
+console.log(Object.keys(datasource[1]).map(key => datasource[1][key]));
+let average = 0;
+for (let i = 0; i < datasource.length; i++) {
+	average += datasource[i].count;
+}
+console.log(average/datasource.length);
+console.log(datasource.reduce((sum,item) => sum+item.type,''));
+</script>

@@ -1,0 +1,48 @@
+<body>
+  Hello, world!
+<div id="ball">I am a ball</div>
+<div> I am a new div </div>
+<br><br>
+	<table border="1">
+
+	</table>
+</body>
+
+<style>
+	#ball {
+		background: green;
+		position: absolute;
+		width: 100px;
+		height: 100px;
+		left: 300px;
+		bottom: 100px;
+		border-radius: 25%;
+		
+	}
+  * {
+    box-sizing: border-box;
+    border-collapse: collapse;
+  }	
+	div {
+		position: absolute;
+	}@
+</style>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script> 
+let r = 6;
+let c = 4;
+let x = '';
+ for (let i = 0; i < r; i++) {
+	x += '<tr>';
+	for (let j = 0; j < c; j++) {
+	x += "<td>";
+	x += i +","+ j
+	x += "</td>"
+	}
+	x += "</tr>"
+  }
+ console.log(x);
+ jQuery('table').html(x);
+
+</script>

@@ -1,0 +1,26 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+	console.clear();
+	function selectionsort(a){
+		for(let i = 0; i < a.length; i++){
+			for(let j = i; j < a.length; j++){
+				if(j == i){
+					min = j;
+				} else if(a[j] < a[min]){
+					min = j;
+
+				}
+			}
+			console.log(i, a[min]);
+
+			let t = a[i];
+			a[i] = a[min];
+			a[min] = t;
+		}
+		return a;
+
+	}
+	let n = [10,233,4,123,3434,234341,1234,14,5,7,141,5,23646,334,5,6,2,3,13,4,44,5,5,435,4,3,2,45,5,2,3,4,5,2,45,3,3766,32,4,522,2,2,3,4,5,332212,-1,2,-1000,-12,34,-6,88,-7,4-5-6,7-4-2-2-2-22-2-2-2];
+	let min = 0;
+	console.log(selectionsort(n))
+</script>

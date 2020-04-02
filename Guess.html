@@ -1,0 +1,65 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+	console.clear();
+	function test(title, f, a) {
+		let [result, count] = f(a);
+		console.log(`${title}: found ${result} in ${count} tries`)
+	}
+	function go(){
+		let a = Math.floor(Math.random() * 1000) + 1;
+		console.log("Random Number", a);
+		test("Progressive Counter Function", progressive, a);
+		test("Repeating Random Function", repeat, a);
+		test("Non-Repeating Random Function", noRepeat, a);
+		test("High/Low Function", hilo, a);
+
+	}
+	function progressive(r) {
+		let times = 1;
+		for (let i = 1; i <= 1000; i++) {
+			if (i == r) {
+				return [i, times];
+			} else times += 1;
+		}
+
+	}
+	function repeat(r) {
+		let times = 0;
+		let randomN;
+		do {
+			randomN = Math.floor(Math.random() * 1000) + 1;
+			times += 1;
+		} while (randomN != r);
+		return [randomN,times];
+	}
+	function noRepeat(r){
+		let times = 0;
+		let randomN = 0;
+		let randomL = [];
+		for (let i = 0; i <= 1000; i++) {
+			while (randomL.includes(randomN) == true) {
+				randomN = Math.floor(Math.random() * 1000) + 1;
+			}
+			if (randomN == r) {
+				return [randomN, times];
+			} else {
+				randomL.push(randomN);
+				times += 1;
+			}
+		}
+	}
+	function hilo(r) {
+		let times = 0;
+		let high = 1000;
+		let low = 1;
+		let cut = 0;
+		for (let i = 0; high > low+1; i++) {
+			cut = Math.floor((high - low) / 2) + low;
+			if (cut > r) high = cut;
+			else low = cut;
+			times += 1;
+		}
+		return [cut,times];
+	}
+	go();
+</script>

@@ -1,0 +1,44 @@
+<html>
+
+	<style>
+		td {
+			width: 6px;
+			height: 6px;
+			background: white;
+			text-align: center;
+		}
+	</style>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<table cellspacing="1" cellpadding="0" bgcolor="grey">
+		<tr>
+			<td>1</td>
+			<td>2</td>
+			<td>3</td>
+		</tr>
+		<tr>
+			<td>4</td>
+			<td>5</td>
+			<td>6</td>
+		</tr>
+		<tr>
+			<td>7</td>
+			<td>8</td>
+			<td>9</td>
+		</tr>
+	</table>
+	<script>
+		const random = (a,b) => Math.floor(Math.random() * (b-a+1)) + a;
+		let w = 100;
+		let h = 100;
+		let table = '';
+		for (let j = 0; j < h; j++) {
+			table += '<tr>';
+			for (let i = 0; i < w; i++) {
+				table += `<td style="background:rgb(${random(0,255)},${random(0,255)},${random(0,255)})"></td>`;
+			}
+			table += '</tr>';
+		}
+		$('table').html(table);
+		console.log(table);
+	</script>
+</html>

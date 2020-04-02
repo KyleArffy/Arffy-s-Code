@@ -1,0 +1,65 @@
+<body>
+	<input id = "x" value = "Type to Encrypt"> 
+	Encryption:
+	<span id = 'e'></span>
+	<br></br><br></br>
+	<input id = "y" value = "Type to Decyrpt">
+	Decryption:
+	<span id = 'd'></span>
+
+
+</body>
+<style>
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+	function encrypt(input,a,b){
+		let e = "";
+		let l = "";
+		for(let i = 0; i < input.length; i++){
+			l = find(input[i], a)
+			e += b[l]
+			// console.log('Encrypting......The', i + 'th letter is', l)
+
+		}
+		return e;
+		
+	}
+	function decrypt(input,a,b){
+		let d = "";
+		let o = "";
+		for(let i = 0; i < input.length; i++){
+			o = find(input[i], b)
+			d += a[o]
+			// console.log('Decrypting...... The', i + 'th letter is', o)
+
+		}
+		return d;
+	}
+
+	function find(ch, s) {
+	    for (let i = 0; i < s.length; i++) {
+	        if (ch == s[i]) return i;
+	    }
+	    return -1;
+	}
+
+	function update(){
+		let input = $('#x').val();
+		$('#e').text(encrypt(input,a,b));
+	}
+
+	function update2(){
+		let input2 = $('#y').val();
+		$('#d').text(decrypt(input2,a,b));
+
+	}
+
+	let a = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"," "];
+	let b = ["n","o","p","q","r","s","t","u","v","w","x","y","z","a","b","c","d","e","f","g","h","i","j","k","l","m"," "];
+	update();
+	update2();
+	$("#x").keyup(update);
+	$("#y").keyup(update2);
+
+</script>

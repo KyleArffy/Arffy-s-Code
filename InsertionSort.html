@@ -1,0 +1,79 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+	console.clear();
+	// function insertionsort(a){
+	// 	for(let i = 1; i < a.length - 1; i++){
+	// 		let t = a[i];
+	// 		for(let j = i; j > 0; j--){
+	// 			if (t < a[j-1]){
+	// 				a[j] = t;
+	// 				break;
+	// 			} else{
+	// 				a[j+1] = a[j];
+	// 			}
+	// 			console.log(i,a,j);
+
+	// 		}
+
+	// 	}
+	// 	return a;
+
+	// }
+	function insertionsort(a) {
+		var t0 = performance.now();
+		for (let i = 1; i < a.length; i++) {
+			let t = a[i];
+			for (let j = i; j >= 0; j--) {
+				if (j==0 || t > a[j-1]) {
+					a[j] = t;
+					break;
+				}
+				a[j] = a[j-1];
+			}
+		}
+		var t1 = performance.now();
+		return [a, t1-t0];
+	}
+	function onesort(a) {
+		return
+	}
+	function time(n){
+		let randomL =[];
+		for (let i = 0; i <	 n; i++) {
+			randomL.push(Math.floor(Math.random() * 1000) + 1);
+		}
+		insertionsort(randomL);
+		var t2 = performance.now();
+		randomL.sort();
+		var t3 = performance.now();
+		console.log("Built-In Sort took", (t3-t2), "milliseconds to sort", randomL.length);
+		
+	}
+	// function test(...a) {
+	// 	let sum0 = a.reduce((accum,value) => accum+value, 0);
+	// 	insertionsort(a);
+	// 	console.log(a);
+	// 	let counter = 0;
+	// 	let sum = a[0];
+	// 	for (let i = 0; i < a.length - 1; i++) {
+
+	// 		if (a[i] <= a[i+1]) {
+	// 			counter += 1;
+	// 			sum += a[i+1];
+
+	// 		}
+	// 	}
+	// 	if (counter == a.length - 1 && sum0 == sum) console.log("yay");
+	// 	else console.log("oof")
+	// }
+	// test(1,4,3,8,5,9);
+	// test(1234,4,4,56,78,9,9,7,645,3645,643,56,57686,543,56766,5432,3,45,678,976,5432,3,456,78,);
+	// test(1,2,3,4,5,6,7,8,9,10,11,12,13);
+	// test(9,8,7,6,5,4,3,2,1)
+	time(10);
+	time(100);
+	time(1000);
+	time(10000);
+	time(100000);
+	time(1000000);
+</script>

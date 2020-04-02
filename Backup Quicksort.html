@@ -1,0 +1,166 @@
+<table></table>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3@4.13.0/build/d3.min.js" charset="utf-8"></script>
+<script src="https://cdn.jsdelivr.net/npm/taucharts@2/dist/taucharts.min.js" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/taucharts@2/dist/taucharts.min.css">
+
+<script>
+	console.clear();
+
+	function quicksort(a,p = 0,r = a.length - 1) {
+		// if (counter++ < 100) console.log(p,r,a);
+		// for (let i = 0; i < a.length; i++) {
+		// 	a[i] = 7;
+		// }
+		// return a;
+		if (p < r) {
+			let q = partition(a,p,r);
+			quicksort(a,p,q-1);
+			quicksort(a,q+1,r);
+		}
+		return [a, swaps];
+
+	}
+	function partition(a,p,r) {
+		let x = a[r];
+		let i = p-1;
+		for (let j = p; j <= r-1; j++) {
+			if (a[j] <= x) {
+				swaps += 1;
+				i += 1;
+				let t = a[i];
+				a[i] = a[j];
+				a[j] = t;
+			}
+		}
+		swaps += 1;
+		[a[i+1], a[r]] = [a[r], a[i+1]];
+		return i + 1;
+	}
+	function jsSort(a) {
+		let start = Date.now();
+		a.sort();
+		let dt = Date.now() - start;
+		return [a, dt]
+	}	
+	function insertionsort(a) {
+		let t0 = Date.now();
+		for (let i = 1; i < a.length; i++) {
+			let t = a[i];
+			for (let j = i; j >= 0; j--) {
+				if (j==0 || t > a[j-1]) {
+					a[j] = t;
+					break;
+				}
+				a[j] = a[j-1];
+			}
+		}
+		let t1 = Date.now() - t0;
+		return [a, t1]
+	}
+	function test(n,r,a){
+		ls = [];
+		if (r == 'random') {
+			for (let i = 0; i < n; i++){
+				ls.push(Math.floor(Math.random() * 1000) + 1);
+			}
+		} if ( r == 'reverse') {
+			for (let i = 0; i < n; i++){
+				ls.push(n-i);
+			}
+
+		} else if (r == 'sorted') {
+			for (let i = 0; i < n; i++){
+				ls.push(i+1);
+			}
+
+		}
+		if (a > 0 && r =='random') {
+			let sorted = true;
+			let average = 0;
+			for (let l = 0; l < a; l++) {
+				swaps = 0;
+				ls = [];
+				if (r == 'random') {
+					for (let i = 0; i < n; i++){
+						ls.push(Math.floor(Math.random() * 100000000) + 1);
+					}
+				} 
+				if 
+				let [array, unit] = quicksort(ls);
+				average += unit;//(array.length * Math.log2(array.length));
+				let ctn = 0;
+				for (let j = 0; j < array.length; j++) {
+					if (array[j] <= array[j+1]) {
+						ctn += 1;
+					} 
+				}
+				if (ctn >= array.length - 1 && array.length == ls.length && sorted == true) sorted = true;
+				else sorted = false;
+			}
+			average /= a;
+			console.log(`${average} is the average swaps divided by nlog(n) in ${a} runs`);
+			console.log(`${sorted}`);
+			$('table').append(`<tr><td>${n}</td><td>${average}</td></tr>`);
+
+		} else if (a > 0 && r == 'random2') {
+			let sorted = true;
+			let average = 0;
+			for (let l = 0; l < a; l++) {
+				swaps = 0;
+				ls = [];
+				if (r == "random2") {
+					for (let i = 0; i < n; i++){
+						ls.push(Math.floor(Math.random() * 100000000) + 1);
+					}
+				} 
+				let [array, unit] = insertionsort(ls);
+				average += unit;//(array.length * Math.log2(array.length));
+				let ctn = 0;
+				for (let j = 0; j < array.length; j++) {
+					if (array[j] <= array[j+1]) {
+						ctn += 1;
+					} 
+				}
+				if (ctn >= array.length - 1 && array.length == ls.length && sorted == true) sorted = true;
+				else sorted = false;
+			}
+			average /= a;
+			console.log(`${average} is the average swaps divided by nlog(n) in ${a} runs`);
+			console.log(`${sorted}`);
+			$('table').append(`<tr><td>${n}</td><td>${average}</td></tr>`);
+
+		} else {
+			if (r == 'random') {
+				for (let i = 0; i < n; i++){
+					ls.push(Math.floor(Math.random() * 1000000) + 1);
+				}
+			}  	
+			console.log(`${ls} is the starting list`);
+			let [array, unit] = quicksort(ls);
+			console.log(`${array} is the sorted list`);
+			console.log(`${unit} is the amount of swaps performed to sort the list`)
+			console.log(`${unit/(array.length * Math.log2(array.length))} is the constant in front of nlog(n)`)
+			let ctn = 0;
+			for (let j = 0; j < array.length; j++) {
+				if (array[j] <= array[j+1]) {
+					ctn += 1;
+				} 
+			}
+			if (ctn >= array.length - 1 && array.length == ls.length) console.log('YAY');
+			else console.log('OOF');
+		}
+
+	}
+	let swaps = 0;
+	let counter = 0;
+	test(10, "random2", 100);
+	test(100, "random2", 100);
+	test(1000, "random2", 100);
+	test(10000, "random2", 10);
+	test(30000, "random2", 10);
+	test(50000, "random2", 10);
+	test(80000, "random2", 10);
+	test(100000, "random2", 10);
+	test(1000000, "random2", 1);
+</script>

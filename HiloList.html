@@ -1,0 +1,37 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+	console.clear();
+
+	function listhilo(n){
+		let ls = [];
+		for (let i = 0; i < n; i++){
+			ls.push(Math.floor(Math.random() * 1000) + 1);
+		}
+		ls.sort(function(a, b){return a-b});
+		let d = Math.floor(Math.random() * 1000) + 1;
+		let high = 1000;
+		let low = 1;
+		let cut = 0;
+		for (let j = 0; high > low+1; j++) {
+			cut = Math.floor((high + low)/2);
+			if (d < ls[cut]) high = cut;
+			else low = cut;
+		}
+		if (ls[cut] == d) return [ls, d, true];
+		else return [ls, d, false];
+
+	}
+	function test(n){
+		let a = listhilo(n);
+		if (a[0].includes(a[1]) == a[2]) {
+			console.log("u did it");
+		}
+	}
+	test(1);
+	test(5);
+	test(10);
+	test(50);
+	test(100);
+	test(500);
+	test(1000);
+</script>

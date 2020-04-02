@@ -1,0 +1,52 @@
+<body>
+
+
+</body>
+<style>
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+	let t = 0
+	function to_base(n,r){
+		console.log('The number in binary was.....', n)
+
+		t = 0
+		for(let i = 0; i < n.length; i++){
+			if(n[n.length - i - 1] == '1'){
+				t += 2 ** i
+			}
+		}
+		converter = '0123456789abcdefghijklmnopqrstuvwxyz'
+		let len = 1;
+		let ans = '';
+		console.log(t);
+		while(len < t){
+			len*=r;
+		}
+		console.log(len);
+		while(len > 1){
+			len= len/r
+			let tmp = Math.floor(t/len);
+			if(tmp*len == len*r){
+				ans+='1'
+				t-=(tmp*len);
+				len*=r
+			}
+			else{
+				ans+=converter[tmp];
+				t-=(len*tmp)
+			}
+			console.log('t',t);
+			console.log('ans',ans);	
+			console.log('tmp',tmp);
+			console.log('len',len);
+
+		}
+		console.log('The number in binary was.....', n)
+		console.log('The base it was converted into was.....', r)
+		console.log('The decimal was.....', t)
+		console.log('The answer was.....', ans)
+	}
+	lol = 'This is a test'
+	to_base('1101001', 3)
+</script>

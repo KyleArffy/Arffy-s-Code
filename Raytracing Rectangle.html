@@ -1,0 +1,99 @@
+<body>
+  Hello, world!
+<div id="ball">I am a ball</div>
+<div> I am a new div </div>
+<br><br>
+	<table border="1">
+
+	</table>
+</body>
+
+<style>
+	#ball {
+		background: green;
+		position: absolute;
+		width: 100px;
+		height: 100px;
+		left: 500px;
+		bottom: 100px;
+		border-radius: 25%;
+		
+	}
+
+* {
+	box-sizing: border-box;
+    border-collapse: collapse;
+  }
+td {
+	width: 10px;
+	height: 10px;
+
+  }	
+	div {
+		position: absolute;
+	}@
+</style>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script> 
+	function pixel(i, j, w, h) {
+		let r = Math.floor(Math.random() * 255);
+		let g = Math.floor(Math.random() * 255);
+		let b = Math.floor(Math.random() * 255);
+		return [r,g,b];
+	}
+	function diskPixel(shape, i, j) {
+		let c2 = (i - shape.x)**2 + (j - shape.y)**2;
+		if (c2 < shape.r**2) {
+			return shape.color;
+		} 
+
+	}
+
+	function rectanglePixel(shape, i, j) {
+		if (shape.x <= j && j < shape.x + shape.w && shape.y <= i && i < shape.y + shape.h) {
+			return shape.color;
+		}
+	}	
+
+	function shapePixel(i, j) {
+		for (let k = 0; k < shapes.length; k++) {
+		   	let shape = shapes[k];
+		   	let result;
+		   	if (shape.shape == 'disk') result = diskPixel(shape, i, j)
+		   	if (shape.shape == 'rect') result = rectanglePixel(shape, i, j)	
+		   	if (result) return result
+		}
+		return [0,255,0];
+	}	
+	function palette(i, j, w, h) {
+		let r = i/(w-1)*255;
+		let g = i/(w-1)*255;
+		let b = 255;
+		return [r,g,b];
+	}
+	let shapes = [
+		{shape: 'rect', x: 25, y: 25, w: 25, h: 25, color: [255, 0, 0]},
+		{shape: 'rect', x: 10, y: 20, w:  2, h:  2, color: [120, 120, 0]},
+		{shape: 'rect', x: 25, y: 12, w:  5, h:  6, color: [24, 0, 120]},
+		{shape: 'rect', x: 23, y:  3, w:  7, h:  2, color: [25, 20, 20]},
+		{shape: 'rect', x: 12, y: 10, w: 10, h:  7, color: [0, 0, 200]},
+		{shape: 'disk', x: 10, y: 10, r: 10, color: [255, 0, 255]},
+		{shape: 'disk', x: 25, y: 25, r: 15, color: [255, 0, 0]}
+	];
+	let z = 50;
+	let v = 50;
+	let x = '';
+	for (let i = 0; i < z; i++){
+		x += "<tr>";
+		for (let j = 0; j < v; j++) {
+			[r,g,b] = shapePixel(i, j)
+			x += '<td style= "background: rgb(' + r + ","+ g + "," + b + ');">'
+			x += "</td>"
+		}
+		x += "</tr>"
+	}
+	console.log(x); 
+	jQuery('table').html(x);
+
+</script>

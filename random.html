@@ -1,0 +1,59 @@
+<body>
+
+
+</body>
+<style>
+</style>
+<script>
+	function dieAverage() {
+		let a = 0;
+		let b = 0;
+		let c = 0;
+		for(let i = 0; i < 1000; i++) {
+			a += Math.floor(6 * Math.random() + 1);
+		}
+		let aa = a/1000;
+		console.log(aa);	
+	}
+
+	function snakeEyes() {
+		let a = 0;
+		let b = 0;
+		let c = 0;
+		for(let i = 0; i < 1000; i++) {
+			a = Math.floor(6 * Math.random() + 1);
+			b = Math.floor(6 * Math.random() + 1);
+			if(a == b){
+				c += 1
+			}
+
+		}
+		let cc = c/1000;
+		console.log(cc);
+		
+	}
+	function random(a, b) {
+		let a = 0;
+		let b = 0;
+		let c = 0;
+		for(let i = 0; i < 100; i++) {
+			x = Math.floor((b - a + 1) * Math.random() + a);
+			console.log(x); 
+		}
+	}
+	function coinFlip(){
+		let f = 0;
+		for(let i = 0; i < 5; i++) {
+			f += Math.floor(2 * Math.random() + 1);
+			if(f == 10) r += 1
+		}
+
+	}
+
+	let r = 0;
+	for(let j = 0; j < 1000; j++){
+		coinFlip()
+	}
+	console.log(r)
+	console.log(r/1000)
+</script>

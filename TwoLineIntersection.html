@@ -1,0 +1,56 @@
+<html>
+    <head>
+        <style>
+            input {
+                width: 30px;
+            }
+            .over {
+                text-decoration: overline;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Compute Intersection of Two Lines</h1>
+        Enter four points:
+        <br/>
+        a: (<input id="ax"/>, <input id="ay"/>) b: (<input id="bx"/>, <input id="by"/>)
+        <br/>
+        c: (<input id="cx"/>, <input id="cy"/>) d: (<input id="dx"/>, <input id="dy"/>)
+        <p></p>
+        <button>Go</button>
+        <p>Results will show up here:</p>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+        <script>
+
+            function changed() {
+                let a = [Number($('#ax').val() || 0), Number($('#ay').val() || 0)];
+                let b = [Number($('#bx').val() || 0), Number($('#by').val() || 0)];
+                let c = [Number($('#cx').val() || 0), Number($('#cy').val() || 0)];
+                let d = [Number($('#dx').val() || 0), Number($('#dy').val() || 0)];
+                
+                // compute intersection here
+                let p = [999, 999];
+                let dx1 = a[0] - b[0];
+                let dx2 = c[0] - d[0];
+                let dy1 = a[1] - b[1];
+                let dy2 = c[1] - d[1];
+                let s1 = dy1/dx1;
+                let s2 = dy2/dx2;
+                let b1 = a[1] - (a[0] * s1);
+                let b2 = c[1] - (c[0] * s2);
+                let xintersection = (b1 - b2) / (s2 - s1);
+                let yintersection = xintersection * s1 + b1;
+                p = [xintersection, yintersection];
+                
+                $('body').append(`a=(${[a[0],a[1]]}) (b=${[b[0],b[1]]}) (c=${[c[0],c[1]]}) (d=${[d[0],d[1]]}), &nbsp; <span class="over">ab</span> &cap; <span class="over">cd</span> = (${p})<br/>`);
+                // $('p').append(`Intersection of lines AB and CD is at ${xintersection} , ${yintersection}`);
+                console.log(s1,s2);
+                console.log(b1,b2);
+            }
+
+            // $('input').change(changed);
+            $('button').click(changed);
+        </script>
+    </body>
+</html>
